@@ -8,27 +8,27 @@ select location, date,total_cases, new_cases, total_deaths, population
 from PortfolioProject..CovidDeaths
 order by 1,2
 
--- looking at total cases and total deaths -- DeathPerc... to procent œmiertelnych przypadów na wszystkich zg³oszonych
--- shows likekihood od dying if you contract covid in your country
+-- looking at total cases and total deaths -- DeathPerc.
+-- shows likelihood od dying if you contract covid in your country
 select location,date,total_cases,total_deaths,(total_deaths/total_cases)*100 as DeathPercaentage
 from PortfolioProject..CovidDeaths
 where location like '%states%' -- your country
 order by 1,2
 
---looking at total cases vs popoulaiton
--- shows what percentage of population got covid
+--looking at total cases vs. population
+-- shows what percentage of the population got covid
 select location,date,total_cases, population,(total_cases/population)*100 as PopPerc
 from PortfolioProject..CovidDeaths
 where location like '%states%'
 order by 1,2
 
--- looking countries with highest infection rate compared to population
+-- looking at countries with the highest infection rate compared to the population
 select location, population, max(total_cases) as InfRate, max((total_cases/population))*100 as PopPercInf
 from PortfolioProject..CovidDeaths
 group by location, population
 order by 4 desc
 
---showing countiers with highest deathcount for population
+--showing countries with the highest death count for population
 select location, max(cast(total_deaths as int)) as TotDeathsCount
 from PortfolioProject..CovidDeaths
 where continent is not null
@@ -42,14 +42,14 @@ where continent is null
 group by location
 order by 2 desc
 
--- w poni¿szy sposób pokazuje nieodpowiednie dane
+-- that way would be wrong
 select continent, max(cast(total_deaths as int)) as TotDeathsCount
 from PortfolioProject..CovidDeaths
 where continent is not null
 group by continent
 order by 2 desc
 
---calculate everything across entire world
+--calculate everything across the entire world
 -- GLOBAL NUMBERS
 select  sum(new_cases) as totalCases, sum(cast(new_deaths as int)) as TotalDeaths, (sum(cast(new_deaths as int))/sum(new_cases))*100 as DeathPerc
 from PortfolioProject..CovidDeaths
@@ -98,7 +98,7 @@ join PortfolioProject..CovidVaccinations vac
 select *, (rolling_vac/population)*100
 from #PercentPopulationVaccinated
 
---creating view to store data for later visualizations
+--creating a view to store data for later visualizations
 create view PercentPopulationVaccinated as
 select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations,
 sum(convert(int,vac.new_vaccinations)) over (partition by dea.location order by dea.location, dea.date) as rolling_vac
